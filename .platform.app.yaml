@@ -1,2 +1,2 @@
 runtime: php
-php_version: 8.0  # or 7.4 if 8.0 doesn't work
+php_version: 8.3  # or 7.4 if 8.0 doesn't work
