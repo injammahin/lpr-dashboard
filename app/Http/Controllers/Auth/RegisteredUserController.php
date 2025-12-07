@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\InvitedUser;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -48,4 +49,58 @@ class RegisteredUserController extends Controller
 
         return redirect(RouteServiceProvider::HOME);
     }
+public function inviteForm($token)
+{
+    $invite = InvitedUser::where('token', $token)->first();
+
+    if (!$invite) {
+        abort(404, "Invalid or expired invitation link.");
+    }
+
+    return view('auth.invite-register', compact('invite'));
+}
+
+// public function inviteRegister(Request $request, $token)
+// {
+//     $invite = InvitedUser::where('token', $token)->first();
+
+//     if (!$invite) {
+//         abort(404);
+//     }
+
+//     $request->validate([
+//         'name' => 'required|string|max:255',
+//         'password' => 'required|min:6|confirmed'
+//     ]);
+
+//     $user = \App\Models\User::create([
+//         'name' => $request->name,
+//         'email' => $invite->email,
+//         'password' => bcrypt($request->password)
+//     ]);
+
+//     $invite->accepted = true;
+//     $invite->save();
+
+//     auth()->login($user);
+
+//     return redirect('/dashboard-ui');
+// }
+public function acceptInvite($token)
+{
+    $invite = \App\Models\InvitedUser::where('token', $token)->first();
+
+    if (!$invite) {
+        abort(404);
+    }
+
+    // Mark as accepted
+    $invite->accepted = true;
+    $invite->save();
+
+    return redirect()->route('login')->with('success', 'Invitation accepted! You can now log in.');
+}
+
+
+
 }

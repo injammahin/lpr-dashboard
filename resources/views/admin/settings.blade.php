@@ -1,15 +1,38 @@
-<x-app-layout>
-    <div class="max-w-3xl mx-auto p-6 bg-white rounded shadow">
-        <form method="POST" enctype="multipart/form-data">
-            @csrf
+{{-- resources/views/admin/dashboard.blade.php --}}
+<x-admin-layout>
 
-            <label class="block font-semibold">Header Text</label>
-            <input type="text" name="header_text" class="w-full border p-2" value="{{ $settings->header_text }}">
+    <h2 class="text-3xl font-semibold mb-6">System Settings</h2>
 
-            <label class="block mt-4 font-semibold">Logo</label>
-            <input type="file" name="logo">
+    @if (session('success'))
+        <div class="p-4 bg-green-200 text-green-800 rounded mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
 
-            <button class="mt-4 px-4 py-2 bg-black text-white rounded">Save</button>
-        </form>
-    </div>
-</x-app-layout>
+    <form action="{{ route('admin.update') }}" method="POST" enctype="multipart/form-data"
+        class="bg-white p-6 rounded-xl shadow-md">
+
+        @csrf
+
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium">Header Title</label>
+            <input type="text" name="header_title" class="w-full mt-1 border-gray-300 rounded-lg shadow-sm"
+                value="{{ old('header_title', $settings->header_title ?? '') }}">
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium">Logo</label>
+            <input type="file" name="logo" class="w-full mt-1 border-gray-300 rounded-lg shadow-sm">
+
+            @if ($settings->logo_path ?? false)
+                <img src="{{ asset('storage/' . $settings->logo_path) }}" class="mt-3 w-28 rounded shadow">
+            @endif
+        </div>
+
+        <button class="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            Save Settings
+        </button>
+
+    </form>
+
+</x-admin-layout>
